@@ -1,5 +1,8 @@
 # MaaS (Mock As A Service)
 
+![MAAS](img/maas.png)
+
+
 MaaS est un serveur HTTP simple et léger écrit en Python, compatible avec Python 2.7 et Python 3. Il permet de servir des fichiers statiques et de gérer des en-têtes HTTP personnalisés.
 
 ---

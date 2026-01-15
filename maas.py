@@ -4,7 +4,7 @@ import time
 import sys
 import os 
 
-# Lecture du fichier de réposne HTTP 
+# Lecture du fichier de reponse HTTP 
 def read_file_content(fileName):
     if not os.path.exists(fileName):
         raise Exception("File "+fileName+" doesn't exists or is not readable.")
@@ -19,14 +19,14 @@ def get_headers(headers_str):
         return headers
 
     for header in headers_str.split(';'):
-        # On ignore les entrées vides
+        # On ignore les entrees vides
         if  header.strip():
             key_value = header.split(':', 1)
             if len(key_value) == 2:
                 headers[key_value[0].strip()] = key_value[1].strip()
     return headers
 
-# Détection de la version de Python
+# Detection de la version de Python
 if sys.version_info[0] == 2:
     from SimpleHTTPServer import SimpleHTTPRequestHandler
     from SocketServer import TCPServer
@@ -85,11 +85,15 @@ HEADERS = get_headers(args.responseHeaders)
 
 class Handler(HandlerClass):
     
-    def do_GET(self):
+     def do_GET(self):
+        time.sleep(float(args.delay)*0.001)
         logging.info("Client: %s | Methode: %s | Chemin: %s | Query: %s" %
                      (self.client_address[0], self.command, self.path,
                       self.path.split('?')[1] if '?' in self.path else 'None'))
         self.send_response(args.responseCode)
+        logging.debug("Client: %s | Methode: %s | Chemin: %s | Headers: %s " %
+                    (self.client_address[0], self.command, self.path, dict(self.headers)))
+        
         for k,v in HEADERS.items():
             self.send_header(k,v)
         if 'Content-Length' in HEADERS.keys() :
@@ -98,7 +102,7 @@ class Handler(HandlerClass):
         self.wfile.write(SERVICE_RESPONSE)
 
     def do_POST(self):
-        time.sleep(args.delay)
+        time.sleep(float(args.delay)*0.001)
         content_length = int(self.headers.get('Content-Length', 0))
         body = self.rfile.read(content_length) if content_length > 0 else ''
         logging.info("Client: %s | Methode: %s | Chemin: %s | Body size: %d" %
@@ -114,6 +118,7 @@ class Handler(HandlerClass):
             self.send_header('Content-Length', len(SERVICE_RESPONSE))
         self.end_headers()
         self.wfile.write(SERVICE_RESPONSE)
+
 
 
 
